@@ -40,14 +40,18 @@ def calculate_gradient(y, tx, w):
     gradient = np.dot(np.transpose(tx), logfn-y)
     return gradient
     
-def learning_by_gradient_descent(y, tx, w, gamma):
+def learning_by_gradient_descent(y, tx, w, gamma, lambda_):
     # ************ Peforms one iteration of the gradient descent ****************
     
     # Get the loss function
     loss = calculate_loss(y,tx,w) 
     
     # Get the gradient of the loss function at the current point
-    gradient = calculate_gradient(y,tx,w) 
+    gradient = calculate_gradient(y,tx,w)
+    if lambda_ > -1:
+        loss += lambda_ * w.T.dot(w)
+        gradient += 2 * lambda_ * w
+			
     # print('shape of the original w is : ', np.shape(w))
     # print('norm of the original w is : ', np.linalg.norm(w))	
     # print('the shape of the gradient is: ', np.shape(gradient))
@@ -79,13 +83,17 @@ def learning_by_newton_method(y, tx, w,gamma, lambda_):
     loss = calculate_loss(y,tx,w)
     gradient = calculate_gradient(y,tx,w)
     hessian = calculate_hessian(y,tx,w)
-    print('Gradient before regularization is', np.linalg.norm(gradient))
-    if lambda_ > 0:
-        loss += lambda_ * np.squeeze(w.T.dot(w))
-        gradient += 2 * lambda_ * w
-        hessian += lambda_*2 	
-    print('Gradient after regularization is', np.linalg.norm(gradient))
-    print('The loss is', loss)
+    # print('Loss before regularization is', loss)
+    # print('Gradient before regularization is', np.linalg.norm(gradient))
+    if lambda_ > -1:
+        # loss += lambda_ * w.T.dot(w)
+        loss += lambda_ * np.sum(w)
+        # gradient += 2 * lambda_ * w
+        gradient += lambda_ * 1
+        # hessian += lambda_*2 	
+    # print('Loss after regularization is', loss)
+    # print('Gradient after regularization is', np.linalg.norm(gradient))
+    # print('The loss is', loss)
     # print('size of the gradient is', np.shape(gradient))
     # print('size of the hessian is', np.shape(hessian))
     """ Note that instead of computing the inverse of the hessian and then multiplying by the gradient,
@@ -117,7 +125,7 @@ def logistic_regression(y,tx,isNewton,stepSize,max_iter, lambda_ = 0):
         if(isNewton): # Get the updated w using the Newton's method
             loss, w = learning_by_newton_method(y, tx, w,gamma, lambda_)
         else: # Otherwise, use the Gradient Descent method 
-            loss, w = learning_by_gradient_descent(y, tx, w, gamma)
+            loss, w = learning_by_gradient_descent(y, tx, w, gamma, lambda_)
         print('The loss is:', loss)
         losses.append(loss)        
         if len(losses) > 1 and (np.abs(losses[-1] - losses[-2]))/np.abs(losses[-1]) < threshold:
