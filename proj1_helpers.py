@@ -2,6 +2,7 @@
 """some helper functions for project 1."""
 import csv
 import numpy as np
+from collections import Counter
 
 def split_data(tx, y, ratio, seed=1):
     """
@@ -18,6 +19,25 @@ def split_data(tx, y, ratio, seed=1):
     test_tx = tx[ind[limit:]]
     test_y = y[ind[limit:]]
     return train_tx, train_y, test_tx, test_y
+
+def split_data_by_jet_num(tx, y, ids):
+
+    tx_jet_num_0 = tx[tx[:, 22] == 0]
+    tx_jet_num_1 = tx[tx[:, 22] == 1]
+    tx_jet_num_others = tx[tx[:, 22] > 1]
+    y_jet_num_0 = y[tx[:, 22] == 0]
+    y_jet_num_1 = y[tx[:, 22] == 1]
+    y_jet_num_others = y[tx[:, 22] > 1]
+    ids_jet_num_0 = ids[tx[:, 22] == 0]
+    ids_jet_num_1 = ids[tx[:, 22] == 1]
+    ids_jet_num_others = ids[tx[:, 22] > 1]
+
+    tx_jet_num_0 = np.delete(tx_jet_num_0, [22, 4, 5, 6, 12, 23, 24, 25, 26, 27, 28, 29], axis=1)
+    tx_jet_num_1 = np.delete(tx_jet_num_1, [22, 4, 5, 6, 12, 26, 27, 28], axis=1)
+    tx_jet_num_others = np.delete(tx_jet_num_others, [22], axis=1)
+
+    return tx_jet_num_0, y_jet_num_0, ids_jet_num_0, tx_jet_num_1, y_jet_num_1, ids_jet_num_1, \
+     tx_jet_num_others, y_jet_num_others, ids_jet_num_others
 
 def read_csv_headers(data_path):
     with open(data_path, 'r') as infile:
@@ -47,8 +67,6 @@ def load_csv_data(data_path, sub_sample=False):
 
 #Create polynomial terms for each column of tx 
 def get_polynomial(tx,poly_term):
-	# Author: BN
-	# Date: 18/10/2018
 	tx_temp = tx.copy()
 	tx_return = tx.copy()
 	for i in range(poly_term-1):
@@ -66,11 +84,9 @@ def get_data_by_type(input_data, type_tag):
 
 # Standardize the training data using Z score standardization
 def standardize_training(x):
-	# Author : OT
-	# Date: 10/10/2018
-	mean_x = np.mean(x,axis= 0)
+	mean_x = np.mean(x,axis=0)
 	x = x - mean_x
-	std_x = np.std(x,axis= 0)
+	std_x = np.std(x,axis=0)
 	x = x / std_x
 	return x, mean_x, std_x
 	
@@ -97,8 +113,10 @@ def remove_outliers(tx,y,threshold):
     n_columns = shape_tx[1]
     for i_col in range(n_columns):
         y = y[np.where(np.abs(tx[:,i_col]) < threshold)]
-        tx = tx[np.where(np.abs(tx[:,i_col]) < threshold)]       
-    return tx, y
+        tx = tx[np.where(np.abs(tx[:,i_col]) < threshold)]
+        y_out = y[np.where(np.abs(tx[:,i_col]) >= threshold)]
+        tx_out = tx[np.where(np.abs(tx[:,i_col]) >= threshold)]       
+    return tx, y, tx_out, y_out
 
 # Replace -999 in a column with mean of remaining elements
 def replace_999(tx):
@@ -118,9 +136,6 @@ def replace_999(tx):
 		
 #remove columns with large 999
 def remove_columns_invalid(input_data, thresh):
-	# Author : SS
-	# Modification : BN 
-	# Modified Date : 17/10/2018
     input_data_ss = input_data
     ct = 0
     for column in input_data.T:
@@ -145,8 +160,6 @@ def predict_labels(weights, data):
 
 #Verify the predicted y against the test y for cross validation data sets 
 def verify_prediction(y_pred, y_test):
-    #Author : BN 
-	#Date: 17/10/2018
     y_diff = y_pred - y_test
     nFalse = len(y_diff[y_diff !=0 ])
     # accuracy = 1 - np.sum(y_diff)/len(y_diff)
