@@ -20,6 +20,7 @@ def split_data(tx, y, ratio, seed=1):
     test_y = y[ind[limit:]]
     return train_tx, train_y, test_tx, test_y
 
+# Split the data by jet number, with 2 and 3 grouped as one
 def split_data_by_jet_num(tx, y, ids):
 
     tx_jet_num_0 = tx[tx[:, 22] == 0]
@@ -39,6 +40,66 @@ def split_data_by_jet_num(tx, y, ids):
     return tx_jet_num_0, y_jet_num_0, ids_jet_num_0, tx_jet_num_1, y_jet_num_1, ids_jet_num_1, \
      tx_jet_num_others, y_jet_num_others, ids_jet_num_others
 
+def split_data_by_jet_num_1(tx, y, ids):
+		
+    tx_jet_num =  [  tx[tx[:, 22] == 0],  tx[tx[:, 22] == 1],  tx[tx[:, 22] >= 2]]
+    
+    y_jet_num =   [   y[tx[:, 22] == 0],   y[tx[:, 22] == 1],   y[tx[:, 22] >= 2]] 
+    
+    ids_jet_num = [ ids[tx[:, 22] == 0], ids[tx[:, 22] == 1], ids[tx[:, 22] >= 2]]
+    	
+    # tx_jet_num[0] = np.delete(tx_jet_num[0], [22, 8, 4, 5, 6, 12, 23, 24, 25, 26, 27, 28, 29], axis=1)
+    # tx_jet_num[1] = np.delete(tx_jet_num[1], [22, 4, 5, 6, 12, 26, 27, 28, 29], axis=1)
+    # tx_jet_num[2] = np.delete(tx_jet_num[2], [22, 29], axis=1)
+    tx_jet_num[2] = np.delete(tx_jet_num[2], [22, 15, 18, 20, 25,28, 29], axis=1)
+    # tx_jet_num[3] = np.delete(tx_jet_num[3], [22, 29], axis=1)
+
+	#Removing some PHI as well
+    tx_jet_num[0] = np.delete(tx_jet_num[0], [22, 8, 4, 5, 6, 12, 15, 18, 20, 23, 24, 25, 26, 27, 28, 29], axis=1)
+    tx_jet_num[1] = np.delete(tx_jet_num[1], [22, 4, 5, 6, 12, 15, 18, 20, 25, 26, 27, 28, 29], axis=1)
+    # tx_jet_num[2] = np.delete(tx_jet_num[2], [22, 15, 18, 20, 25, 27, 28, 29], axis=1)
+    # tx_jet_num[3] = np.delete(tx_jet_num[3], [22, 15, 18, 20, 25, 27,  29], axis=1)
+	
+	#Removing only PHI
+    # tx_jet_num[0] = np.delete(tx_jet_num[0], [22, 15, 18, 20, 25, 27, 28], axis=1)
+    # tx_jet_num[1] = np.delete(tx_jet_num[1], [22, 15, 18, 20, 25, 27, 28], axis=1)
+    # tx_jet_num[2] = np.delete(tx_jet_num[2], [22, 15, 18, 20, 25, 27, 28], axis=1)
+    # tx_jet_num[3] = np.delete(tx_jet_num[3], [22, 15, 18, 20, 25, 27, 28], axis=1)
+
+	
+    return tx_jet_num, y_jet_num, ids_jet_num	 	 
+	 
+	 
+# Split the data by jet number, with 2 and 3 separate	 
+def split_data_by_jet_num_2(tx, y, ids):
+		
+    tx_jet_num =  [  tx[tx[:, 22] == 0],  tx[tx[:, 22] == 1],  tx[tx[:, 22] == 2],  tx[tx[:, 22] == 3]]
+    
+    y_jet_num =   [   y[tx[:, 22] == 0],   y[tx[:, 22] == 1],   y[tx[:, 22] == 2],   y[tx[:, 22] == 3]] 
+    
+    ids_jet_num = [ ids[tx[:, 22] == 0], ids[tx[:, 22] == 1], ids[tx[:, 22] == 2], ids[tx[:, 22] == 3] ]
+    	
+    # tx_jet_num[0] = np.delete(tx_jet_num[0], [22, 8, 4, 5, 6, 12, 23, 24, 25, 26, 27, 28, 29], axis=1)
+    # tx_jet_num[1] = np.delete(tx_jet_num[1], [22, 4, 5, 6, 12, 26, 27, 28, 29], axis=1)
+    # tx_jet_num[2] = np.delete(tx_jet_num[2], [22, 29], axis=1)
+    tx_jet_num[2] = np.delete(tx_jet_num[2], [22, 15, 18, 20, 25,28, 29], axis=1)
+    # tx_jet_num[3] = np.delete(tx_jet_num[3], [22, 29], axis=1)
+
+	#Removing some PHI as well
+    tx_jet_num[0] = np.delete(tx_jet_num[0], [22, 8, 4, 5, 6, 12, 15, 18, 20, 23, 24, 25, 26, 27, 28, 29], axis=1)
+    tx_jet_num[1] = np.delete(tx_jet_num[1], [22, 4, 5, 6, 12, 15, 18, 20, 25, 26, 27, 28, 29], axis=1)
+    # tx_jet_num[2] = np.delete(tx_jet_num[2], [22, 15, 18, 20, 25, 27, 28, 29], axis=1)
+    tx_jet_num[3] = np.delete(tx_jet_num[3], [22, 15, 18, 20, 25, 27,  29], axis=1)
+	
+	#Removing only PHI
+    # tx_jet_num[0] = np.delete(tx_jet_num[0], [22, 15, 18, 20, 25, 27, 28], axis=1)
+    # tx_jet_num[1] = np.delete(tx_jet_num[1], [22, 15, 18, 20, 25, 27, 28], axis=1)
+    # tx_jet_num[2] = np.delete(tx_jet_num[2], [22, 15, 18, 20, 25, 27, 28], axis=1)
+    # tx_jet_num[3] = np.delete(tx_jet_num[3], [22, 15, 18, 20, 25, 27, 28], axis=1)
+
+	
+    return tx_jet_num, y_jet_num, ids_jet_num	 
+	 
 def read_csv_headers(data_path):
     with open(data_path, 'r') as infile:
         reader = csv.DictReader(infile)
@@ -98,6 +159,7 @@ def standardize_test(x,mean_x,std_x):
 	return x
 
 # Standardize data using min-max standardization
+# NOT REQUIRED
 def standardize_minmax(tx):
 	n_col = tx.shape[1]
 	tx_return = tx.copy()
@@ -118,6 +180,38 @@ def remove_outliers(tx,y,threshold):
         tx_out = tx[np.where(np.abs(tx[:,i_col]) >= threshold)]       
     return tx, y, tx_out, y_out
 
+# In the test data, set the prediction for all samples with -999 in DER_MASS to background
+def set_background(tx,y, sd):
+	# der_mass_mmc = tx[:,0] # Get the der_mass_mmc column from tx
+	# print('y before setting =', y[np.where(der_mass_mmc == -999)])
+	# y[np.where(der_mass_mmc == -999)] = -1
+	# print('y after setting =', y[np.where(der_mass_mmc == -999)])
+	count = 0
+	# Set background for outliers
+	n_rows = tx.shape[0]
+	for i in range(n_rows):
+		row_vec = tx[i,:]
+		n_outliers = np.where(row_vec > sd)
+		# print(np.shape(n_outliers)[1])
+		if((np.shape(n_outliers)[1]) > 5):
+			count +=1
+			y[i] = -1
+		else:
+			n_outliers = np.where(row_vec < -1*sd)
+			if((np.shape(n_outliers)[1]) > 5):
+				count +=1
+				y[i] = -1
+		
+	print('number changed =', count)
+	
+	return y
+
+def redo_standardization(tx, mean, sd):
+	tx = tx*sd
+	tx = tx + mean
+	tx, mean_tx,std_tx = standardize_training(tx)
+	return tx, mean_tx, std_tx
+	
 # Replace -999 in a column with mean of remaining elements
 def replace_999(tx):
 	n_col = tx.shape[1]
@@ -129,11 +223,34 @@ def replace_999(tx):
 		if(len(vec) > 0):
 			# mean_vec = np.mean(vec)
 			mean_vec = np.median(vec)
+			# vec_temp[vec_temp == -999] = mean_vec
 			vec_temp[vec_temp == -999] = mean_vec
 		tx_return[:,col] = vec_temp
 	return tx_return
 
-		
+# Replace -999 in der_mass_mmc with the mean of the background
+def replace_999_mass(tx,y):
+	der_mass_mmc = tx[:,0] # Get the der_mass_mmc column from tx
+	vec_bg = der_mass_mmc[np.where(y == -1)] # vector containing mass entries for the background only
+	# print('No. of background = ', np.shape(vec_bg)) 
+	vec_bg = vec_bg[vec_bg > -999]  # get non -999 entries to calculate their mean and median
+	# print('No. of valid background = ', np.shape(vec_bg))
+	mean_bg = np.mean(vec_bg)
+	# print('Mean. of valid background = ', mean_bg)
+	median_bg = np.median(vec_bg)
+	
+	# Replace all -999 in der_mass_mmc with the median or mean of the background data with proper values
+	# print('der_mass BEFORE', tx[:,0])
+	der_mass_mmc[np.where(tx[:,0] == -999)] = median_bg
+	
+	# difference_vector = der_mass_mmc - tx[:,0]
+	# print('difference vector = ', difference_vector)
+	
+	tx[:,0] = der_mass_mmc
+	# print('der_mass AFTER', tx[:,0])
+	return tx
+	
+	
 #remove columns with large 999
 def remove_columns_invalid(input_data, thresh):
     input_data_ss = input_data
@@ -161,6 +278,7 @@ def predict_labels(weights, data):
 #Verify the predicted y against the test y for cross validation data sets 
 def verify_prediction(y_pred, y_test):
     y_diff = y_pred - y_test
+    # print(len(y_diff))
     nFalse = len(y_diff[y_diff !=0 ])
     # accuracy = 1 - np.sum(y_diff)/len(y_diff)
     accuracy = 1 - nFalse/len(y_diff)

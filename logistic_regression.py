@@ -2,9 +2,6 @@ import numpy as np
 
 def sigmoid(t):
     """apply sigmoid function on t."""
-    # ***************************************************
-    # print('Shape of t is', np.shape(t))
-    # logfn = np.divide(np.exp(t),1+np.exp(t))
     logfn = np.divide(1,1+np.exp(-t))    
     return logfn
 
@@ -27,18 +24,29 @@ def calculate_gradient(y, tx, w):
     # Reshape all vectors
     y = np.reshape(y,(len(y),))
     w = np.reshape(w,(len(w),))
-    # print('tx,w is : ', np.dot(tx,w))
-    # print('norm of the original tx,w is : ', np.linalg.norm(np.dot(tx,w)))	
-    # Get the sigmoid function and reshape it just in case
+  
+	# Get the sigmoid function and reshape it just in case
     logfn = sigmoid(np.dot(tx,w))
-    # print('Sigmoid function in calculate_gradient is:', logfn)
     logfn = np.reshape(logfn,(len(logfn),))
-    # print('Sigmoid function after reshape in calculate_gradient is:', logfn)
-	# print('shape of logfn is : ', np.shape(logfn))
-    # print('norm of logfn w is : ', np.linalg.norm(logfn))	
-    # Obtain the gradient : delta =  X'(sigma - y)
+  
     gradient = np.dot(np.transpose(tx), logfn-y)
     return gradient
+
+def learning_by_stochastic_gradient_descent(y, tx, w, gamma, lambda_):
+    # ************ Peforms one iteration of the gradient descent ****************
+    
+    # Get the loss function
+    loss = calculate_loss(y,tx,w) 
+    
+    # Get the gradient of the loss function at the current point
+    gradient = calculate_gradient(y,tx,w)
+    if lambda_ > -1:
+        loss += lambda_ * w.T.dot(w)
+        gradient += 2 * lambda_ * w
+
+    # Update the weight vector using a step size gamma and the direction provided by the gradient
+    w = w - gamma*gradient 
+    return loss, w
     
 def learning_by_gradient_descent(y, tx, w, gamma, lambda_):
     # ************ Peforms one iteration of the gradient descent ****************
@@ -51,15 +59,9 @@ def learning_by_gradient_descent(y, tx, w, gamma, lambda_):
     if lambda_ > -1:
         loss += lambda_ * w.T.dot(w)
         gradient += 2 * lambda_ * w
-			
-    # print('shape of the original w is : ', np.shape(w))
-    # print('norm of the original w is : ', np.linalg.norm(w))	
-    # print('the shape of the gradient is: ', np.shape(gradient))
-    # print('norm of the gradient is : ', np.linalg.norm(gradient))	
+
     # Update the weight vector using a step size gamma and the direction provided by the gradient
     w = w - gamma*gradient 
-    # print('gamma*gradient is : ', gamma*gradient)
-    # print('norm of the final w is : ', np.linalg.norm(w))	
     return loss, w
 
 def calculate_hessian(y, tx, w):
@@ -83,36 +85,54 @@ def learning_by_newton_method(y, tx, w,gamma, lambda_):
     loss = calculate_loss(y,tx,w)
     gradient = calculate_gradient(y,tx,w)
     hessian = calculate_hessian(y,tx,w)
-    # print('Loss before regularization is', loss)
-    # print('Gradient before regularization is', np.linalg.norm(gradient))
+    
     if lambda_ > -1:
-        # loss += lambda_ * w.T.dot(w)
-        loss += lambda_ * np.sum(w)
-        # gradient += 2 * lambda_ * w
-        gradient += lambda_ * 1
-        # hessian += lambda_*2 	
-    # print('Loss after regularization is', loss)
-    # print('Gradient after regularization is', np.linalg.norm(gradient))
-    # print('The loss is', loss)
-    # print('size of the gradient is', np.shape(gradient))
-    # print('size of the hessian is', np.shape(hessian))
-    """ Note that instead of computing the inverse of the hessian and then multiplying by the gradient,
+        loss += lambda_ * w.T.dot(w)
+        gradient += 2 * lambda_ * w
+        hessian += np.identity(len(hessian))*lambda_*2
+    
+	""" Note that instead of computing the inverse of the hessian and then multiplying by the gradient,
     I solve a linear system -> lambda = inv(H)*gradient => H*lambda = gradient.
     Hence I can calculate lambda and use it for the update : w = w - lambda """
     
     lam_ = np.linalg.solve(hessian,gradient)
-    # print('size of the lambda_ is', np.shape(lambda_))
-    # w = w - gamma*lambda_     
+    
     w = w - gamma*lam_     
     return loss, w
 
+def logistic_regression_SGD(y, tx, max_iters, stepsize):
+    """Stochastic gradient descent algorithm."""
+    # ***************************************************
+    # INSERT YOUR CODE HERE
+    # TODO: implement stochastic gradient descent.
+    # ***************************************************
+    # Initialize guess weights
+    w = np.zeros((tx.shape[1], ))
+    gamma = stepsize
+    losses = []
+    batch_size = 1
+    for n_iter in range(max_iters):
+        #y_n, tx_n = batch_iter(y, tx, batch_size)
+        for minibatch_y, minibatch_tx in batch_iter(y, tx, batch_size):
+            loss = calculate_loss(y, tx, w)
+            gradient = calculate_gradient(minibatch_y, minibatch_tx, w)
+            w = w - gamma * gradient
+            # store w and loss
+            ws.append(w)
+            losses.append(loss)		
+            if len(losses) > 1 and (np.abs(losses[-1] - losses[-2]))/np.abs(losses[-1]) < threshold:
+				break
+            print("Stochastic Gradient Descent({bi}/{ti}): loss={l}, w0={w0}, w1={w1}".format(
+              bi=n_iter, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]))
+			  
+    w_star = w
+    return w_star
+	
 def logistic_regression(y,tx,isNewton,stepSize,max_iter, lambda_ = 0):
     # First convert the data to a 0-1 scale
     y[np.where(y == -1)] = 0
 	# init parameters
-    # max_iter = 500
-    threshold = 1e-6
-#     lambda_ = 0.1
+    threshold = 1e-7
     losses = []
     gamma = stepSize
 
@@ -121,12 +141,11 @@ def logistic_regression(y,tx,isNewton,stepSize,max_iter, lambda_ = 0):
 
     # Start the logistic regression
     for iter in range(max_iter):
-        print('ITERATION NUMBER:',iter)
+        # print('ITERATION NUMBER:',iter)
         if(isNewton): # Get the updated w using the Newton's method
             loss, w = learning_by_newton_method(y, tx, w,gamma, lambda_)
         else: # Otherwise, use the Gradient Descent method 
             loss, w = learning_by_gradient_descent(y, tx, w, gamma, lambda_)
-        print('The loss is:', loss)
         losses.append(loss)        
         if len(losses) > 1 and (np.abs(losses[-1] - losses[-2]))/np.abs(losses[-1]) < threshold:
             break
