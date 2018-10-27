@@ -84,33 +84,33 @@ def learning_by_newton_method(y, tx, w,gamma, lambda_):
     w = w - gamma*lam_     
     return loss, w
 
-def logistic_regression_SGD(y, tx, stepsize, max_iters):
-    """Stochastic gradient descent algorithm."""
-    # ***************************************************
-    # INSERT YOUR CODE HERE
-    # TODO: implement stochastic gradient descent.
-    # ***************************************************
-    # Initialize guess weights
-    w = np.zeros((tx.shape[1], ))
-    gamma = stepsize
-    threshold = 1e-7
+# def logistic_regression_SGD(y, tx, stepsize, max_iters):
+    # """Stochastic gradient descent algorithm."""
+    # # ***************************************************
+    # # INSERT YOUR CODE HERE
+    # # TODO: implement stochastic gradient descent.
+    # # ***************************************************
+    # # Initialize guess weights
+    # w = np.zeros((tx.shape[1], ))
+    # gamma = stepsize
+    # threshold = 1e-7
 
-    losses = []
-    batch_size = 100
-    for n_iter in range(max_iters):
-        #y_n, tx_n = batch_iter(y, tx, batch_size)
-        for minibatch_y, minibatch_tx in batch_iter(y, tx, batch_size):
-            loss = calculate_loss(y, tx, w)
-            gradient = calculate_gradient(minibatch_y, minibatch_tx, w)
-            w = w - gamma * gradient
-            print('The iteration is ', n_iter, ' The norm of the gradient is =', np.linalg.norm(gradient), ' and the loss is = ', loss  )
-            # print('The loss is', loss)
-            # store w and loss
-            losses.append(loss)		
-            if len(losses) > 1 and (np.abs(losses[-1] - losses[-2]))/np.abs(losses[-1]) < threshold: break
+    # losses = []
+    # batch_size = 100
+    # for n_iter in range(max_iters):
+        # # y_n, tx_n = batch_iter(y, tx, batch_size)
+        # for minibatch_y, minibatch_tx in batch_iter(y, tx, batch_size):
+            # loss = calculate_loss(y, tx, w)
+            # gradient = calculate_gradient(minibatch_y, minibatch_tx, w)
+            # w = w - gamma * gradient
+            # print('The iteration is ', n_iter, ' The norm of the gradient is =', np.linalg.norm(gradient), ' and the loss is = ', loss  )
+            # # print('The loss is', loss)
+            # # store w and loss
+            # losses.append(loss)		
+            # if len(losses) > 1 and (np.abs(losses[-1] - losses[-2]))/np.abs(losses[-1]) < threshold: break
               
-    w_star = w
-    return w_star
+    # w_star = w
+    # return w_star
 	
 def logistic_regression(y,tx,isNewton,stepSize,max_iter, lambda_ = 0):
     # First convert the data to a 0-1 scale
@@ -137,27 +137,27 @@ def logistic_regression(y,tx,isNewton,stepSize,max_iter, lambda_ = 0):
     w_star = w 
     return w_star
 	
-def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
-    """
-    Generate a minibatch iterator for a dataset.
-    Takes as input two iterables (here the output desired values 'y' and the input data 'tx')
-    Outputs an iterator which gives mini-batches of `batch_size` matching elements from `y` and `tx`.
-    Data can be randomly shuffled to avoid ordering in the original data messing with the randomness of the minibatches.
-    Example of use :
-    for minibatch_y, minibatch_tx in batch_iter(y, tx, 32):
-        <DO-SOMETHING>
-    """
-    data_size = len(y)
+# def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
+    # """
+    # Generate a minibatch iterator for a dataset.
+    # Takes as input two iterables (here the output desired values 'y' and the input data 'tx')
+    # Outputs an iterator which gives mini-batches of `batch_size` matching elements from `y` and `tx`.
+    # Data can be randomly shuffled to avoid ordering in the original data messing with the randomness of the minibatches.
+    # Example of use :
+    # for minibatch_y, minibatch_tx in batch_iter(y, tx, 32):
+        # <DO-SOMETHING>
+    # """
+    # data_size = len(y)
 
-    if shuffle:
-        shuffle_indices = np.random.permutation(np.arange(data_size))
-        shuffled_y = y[shuffle_indices]
-        shuffled_tx = tx[shuffle_indices]
-    else:
-        shuffled_y = y
-        shuffled_tx = tx
-    for batch_num in range(num_batches):
-        start_index = batch_num * batch_size
-        end_index = min((batch_num + 1) * batch_size, data_size)
-        if start_index != end_index:
-            yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
+    # if shuffle:
+        # shuffle_indices = np.random.permutation(np.arange(data_size))
+        # shuffled_y = y[shuffle_indices]
+        # shuffled_tx = tx[shuffle_indices]
+    # else:
+        # shuffled_y = y
+        # shuffled_tx = tx
+    # for batch_num in range(num_batches):
+        # start_index = batch_num * batch_size
+        # end_index = min((batch_num + 1) * batch_size, data_size)
+        # if start_index != end_index:
+            # yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]

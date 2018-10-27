@@ -8,7 +8,7 @@ def exp_three_models():
 	training_data_path = "train.csv"
 	test_data_path = "test.csv"
 	output_path = "output.csv"
-	train_ratio = 0.3
+	train_ratio = 0.8
 	n_trials = 10
 	limit = int(train_ratio * 250000)
 	sd_limit_0 = 2.3
@@ -16,10 +16,10 @@ def exp_three_models():
 	sd_limit_2 = 2.75
 	sd_limit_3 = 2.6
 	list_sd_limit = [sd_limit_0,sd_limit_1,sd_limit_2,sd_limit_3]
-	list_poly = [2,2,2,2]
-	list_lambda = [0,0.1,0.5,1.0,5.0,10.0]
-	weights_average = np.array([0, 0 ,0 ,0])
-	maxiter, stepsize, lambda_, is_newton = 20000, 1e-05, 1, 0
+	list_poly = [2,2,2,2] # List of polynomials  for jets 0 to 3
+	list_lambda = [1.0] # List of lambdas for trial
+	weights_average = np.array([0, 0 ,0 ,0]) # Average weights 
+	maxiter, stepsize, is_newton = 20000, 1e-05, 0
 	print('isNewton = ', is_newton)
 	
 	print('stepsize = ', stepsize)
@@ -38,17 +38,15 @@ def exp_three_models():
 		for i_trial in range(n_trials):
 			
 			#Split the data into test and training
-			# print("Split data: START")
 			training_tx, training_y, test_tx, test_y = split_data(training_tx_full, training_y_full, train_ratio, i_trial)
-			# print("Split data: DONE")
-			
-			
-			# print("Split data based on jet number (2 and 3 separate): START")
+						
+			# Split the training data by jet numbers
 			list_training_tx, list_training_y, list_training_ids = split_data_by_jet_num_2(training_tx, training_y, training_ids[:limit])
-			# print("Split data based on jet number (2 and 3 separate): DONE")
-			
+						
 			# Split test data into various jet numbers
 			list_test_tx, list_test_y, list_test_ids = split_data_by_jet_num_2(test_tx, test_y, training_ids[:250000-limit])
+			
+			# List that will contain all the norms of the weights for each jet
 			list_weight_norms = np.array([0,0,0,0])
 			
 			# Loop through jet numbers
@@ -61,7 +59,7 @@ def exp_three_models():
 				#Standardize the training data
 				training_tx_i, training_tx_i_mean, training_tx_i_std = standardize_training(training_tx_i)
 						
-				#Remove outliers and -999 from the standardized training dataset
+				#Remove outliers from the standardized training dataset
 				training_tx_i, training_y_i, training_tx_i_out, training_y_i_out = remove_outliers(training_tx_i,training_y_i,sd_limit)
 
 				#Redo standardization
@@ -72,8 +70,7 @@ def exp_three_models():
 			
 				#Get weights
 				weights_i = logistic_regression(training_y_i, training_tx_i, is_newton, stepsize, maxiter, lambda_)
-				# list_weights.append(weights_i)
-			
+				
 				# ******************************************* PREDICTION *************************************************************
 				#Standardize the test data using training mean and std
 				test_tx_i_standardized = standardize_test(test_tx_i,training_tx_i_mean, training_tx_i_std)
@@ -81,10 +78,10 @@ def exp_three_models():
 				#Create polynomial expansion for the test data
 				test_tx_i_standardized = get_polynomial(test_tx_i_standardized, list_poly[i])
 				
-				#Get predictions for all the jets 
+				#Get predictions for the current jet
 				y_pred_i = predict_labels(weights_i, test_tx_i_standardized)
 				accuracy = verify_prediction(y_pred_i, test_y_i)
-				# print(weights_i)
+				
 				#Collate data for all jets
 				if(i == 0):
 					y_pred_all = y_pred_i
