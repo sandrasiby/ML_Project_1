@@ -2,6 +2,7 @@
 """some helper functions for project 1."""
 import csv
 import numpy as np
+from logistic_regression import * 
 from collections import Counter
 
 def split_data(tx, y, ratio, seed=1):
@@ -269,9 +270,13 @@ def remove_columns_invalid(input_data, thresh):
 #Generates class predictions given weights, and a test data matrix
 def predict_labels(weights, data):
     
-    y_pred = np.dot(data, weights)
-    y_pred[np.where(y_pred <= 0)] = -1
-    y_pred[np.where(y_pred > 0)] = 1
+    # y_pred = np.dot(data, weights)
+    y_pred = sigmoid(np.dot(data, weights))
+	# sigm = sigmoid(y_pred)
+    # print(y_pred)
+    # print(sigm[sigm <= 0.5])
+    y_pred[np.where(y_pred < 0.5)] = -1
+    y_pred[np.where(y_pred >= 0.5)] = 1
     
     return y_pred
 
