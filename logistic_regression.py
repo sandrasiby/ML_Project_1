@@ -130,6 +130,7 @@ def logistic_regression(y,tx,isNewton,stepSize,max_iter, lambda_ = 0):
             loss, w = learning_by_newton_method(y, tx, w,gamma, lambda_)
         else: # Otherwise, use the Gradient Descent method 
             loss, w = learning_by_gradient_descent(y, tx, w, gamma, lambda_)
+        # print('Loss = ', loss)
         losses.append(loss)        
         if len(losses) > 1 and (np.abs(losses[-1] - losses[-2]))/np.abs(losses[-1]) < threshold:
             break

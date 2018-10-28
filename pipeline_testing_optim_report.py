@@ -1,4 +1,4 @@
-from proj1_helpers import *
+from proj1_helpers_1 import *
 from implementations import *
 # from logistic_regression import *
 from logistic_regression import *
@@ -8,17 +8,17 @@ def exp_three_models():
 	training_data_path = "train.csv"
 	test_data_path = "test.csv"
 	output_path = "output.csv"
-	train_ratio = 0.8
+	train_ratio = 0.9
 	n_trials = 10
 	limit = int(train_ratio * 250000)
-	sd_limit_0 = 2.3
-	sd_limit_1 = 2.5
+	sd_limit_0 = 3.0
+	sd_limit_1 = 2.75
 	sd_limit_2 = 2.75
 	sd_limit_3 = 2.6
-	list_sd_limit = [sd_limit_0,sd_limit_1,sd_limit_2,sd_limit_3]
-	list_poly = [2,2,2,2] # List of polynomials  for jets 0 to 3
+	list_sd_limit = [sd_limit_0,sd_limit_1,sd_limit_2,sd_limit_3, sd_limit_0,sd_limit_1,sd_limit_2,sd_limit_3]
+	list_poly = [2,2,2,2,2,2,2,2] # List of polynomials  for jets 0 to 3
 	list_lambda = [1.0] # List of lambdas for trial
-	weights_average = np.array([0, 0 ,0 ,0]) # Average weights 
+	weights_average = np.array([0, 0 ,0 ,0,0, 0 ,0 ,0]) # Average weights 
 	maxiter, stepsize, is_newton = 20000, 1e-05, 0
 	print('isNewton = ', is_newton)
 	
@@ -41,16 +41,19 @@ def exp_three_models():
 			training_tx, training_y, test_tx, test_y = split_data(training_tx_full, training_y_full, train_ratio, i_trial)
 						
 			# Split the training data by jet numbers
-			list_training_tx, list_training_y, list_training_ids = split_data_by_jet_num_2(training_tx, training_y, training_ids[:limit])
+			# list_training_tx, list_training_y, list_training_ids = split_data_by_jet_num_2(training_tx, training_y, training_ids[:limit])
+			list_training_tx, list_training_y, list_training_ids = split_data_by_jet_num_feature(training_tx, training_y, training_ids[:limit])
 						
 			# Split test data into various jet numbers
-			list_test_tx, list_test_y, list_test_ids = split_data_by_jet_num_2(test_tx, test_y, training_ids[:250000-limit])
+			# list_test_tx, list_test_y, list_test_ids = split_data_by_jet_num_2(test_tx, test_y, training_ids[:250000-limit])
+			list_test_tx, list_test_y, list_test_ids = split_data_by_jet_num_feature(test_tx, test_y, training_ids[:250000-limit])
 			
 			# List that will contain all the norms of the weights for each jet
-			list_weight_norms = np.array([0,0,0,0])
+			list_weight_norms = np.array([0,0,0,0,0, 0 ,0 ,0])
 			
 			# Loop through jet numbers
-			for i in range(4):
+			for i in range(8):
+				# print('Jet number is : ', i)
 				training_tx_i, training_y_i, training_ids_i = list_training_tx[i], list_training_y[i], list_training_ids[i]
 				test_tx_i, test_y_i, test_ids_i = list_test_tx[i], list_test_y[i], list_test_ids[i]
 				sd_limit = list_sd_limit[i]
@@ -97,7 +100,7 @@ def exp_three_models():
 				# print('Accuracy 0 is:',accuracy)
 				# print(list_weight_norms)
 			accuracy = verify_prediction(y_pred_all, test_y_all)
-			# print('Accuracy Cross is:',accuracy)
+			print('Accuracy Cross is:',accuracy)
 			accuracy_average = ( accuracy + (accuracy_average*i_trial) )/(i_trial+1)
 			weights_average = ( list_weight_norms + (weights_average*i_trial) )/(i_trial+1)
 		print('Accuracy Average is:', accuracy_average)
