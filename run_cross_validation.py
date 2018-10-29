@@ -1,4 +1,4 @@
-from proj1_helpers_1 import *
+from proj1_helpers import *
 from implementations import *
 
 def run_model(train_ratio, stepsize, lambda_):
@@ -42,14 +42,8 @@ def run_model(train_ratio, stepsize, lambda_):
 			sd_limit = list_sd_limit[i]
 			
 			# ******************************************* TRAINING *************************************************************		
-			#Standardize the training data
-			training_tx_i, training_tx_i_mean, training_tx_i_std = standardize_training(training_tx_i)
-					
-			#Remove outliers from the standardized training dataset
-			training_tx_i, training_y_i, training_tx_i_out, training_y_i_out = remove_outliers(training_tx_i,training_y_i,sd_limit)
-
-			#Redo standardization
-			training_tx_i, training_tx_i_mean, training_tx_i_std = redo_standardization(training_tx_i, training_tx_i_mean, training_tx_i_std)
+			#Standardize the training data after removing outliers
+			training_tx_i, training_y_i, training_tx_i_mean, training_tx_i_std = standardize_training(training_tx_i,training_y_i,sd_limit)
 			
 			#Create polynomial expansions
 			training_tx_i = get_polynomial(training_tx_i, list_poly[i])
@@ -96,7 +90,7 @@ def run_model(train_ratio, stepsize, lambda_):
 		
 
 if __name__ == "__main__":
-    train_ratio = 0.3
+    train_ratio = 0.9
     lambdas = 1.
     gammas = [0.1]
     	

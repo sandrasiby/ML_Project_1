@@ -167,7 +167,7 @@ def standardize_training(tx, y, threshold):
 
 
 def predict_labels(weights, data, isLogistic):
-    '''Generates class predictions given weights, and a test data matrix'''
+	'''Generates class predictions given weights, and a test data matrix'''
 	# If the classification used is logistic regression
 	if(isLogistic):
 		y_pred = sigmoid(np.dot(data, weights)) # Obtain the log function values

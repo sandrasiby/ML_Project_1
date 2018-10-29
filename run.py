@@ -1,16 +1,15 @@
-from proj1_helpers_final import *
+from proj1_helpers import *
 from implementations import *
-from logistic_regression_final import *
 
-def exp_three_models():
+def run_model():
 
 	# ******************************************* INPUT PARAMS *************************************************************
 	training_data_path = "train.csv"
 	test_data_path = "test.csv"
 	output_path = "output.csv"
-	sd_limit_0, sd_limit_1, sd_limit_2, sd_limit_3 = 2.5, 2.75, 2.75, 2.6 # SD above which outliers will be removed for each of the 4 jets
+	sd_limit_0, sd_limit_1, sd_limit_2, sd_limit_3 = 3.0, 2.75, 2.75, 2.6 # SD above which outliers will be removed for each of the 4 jets
 	list_sd_limit = [sd_limit_0,sd_limit_1,sd_limit_2,sd_limit_3,sd_limit_0,sd_limit_1,sd_limit_2,sd_limit_3]
-	max_iters, stepsize, lambda_, is_newton = 20000, 1e-06, 1, 1 # Iterations for logistic regression
+	max_iters, stepsize, lambda_ = 20000, 1e-01, 1# Iterations for logistic regression
 	
 	# ******************************************* READ DATA *************************************************************
 	#Read training data
@@ -42,8 +41,8 @@ def exp_three_models():
 	
 		#Get weights
 		initial_w = np.zeros((training_tx_i.shape[1], ))
-		# weights_i = reg_logistic_regression_newton(training_y_i, training_tx_i,lambda_, initial_w, max_iters, stepsize)
-		weights_i, loss_i = stochastic_gradient_descent(training_y_i, training_tx_i, initial_w, 1, max_iters, stepsize)
+		weights_i, loss_i = reg_logistic_regression_newton(training_y_i, training_tx_i,lambda_, initial_w, max_iters, stepsize)
+		# weights_i, loss_i = stochastic_gradient_descent(training_y_i, training_tx_i, initial_w, 1, max_iters, stepsize)
 		print('weights are',weights_i)
 			
 		# ************************* PREDICTION FOR CURRENT JET NUMBER AND DER_MASS_MMC *********************************************		
@@ -80,6 +79,6 @@ def exp_three_models():
 
 if __name__ == "__main__":
 
-	exp_three_models()
+	run_model()
 
 	
