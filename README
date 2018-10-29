@@ -1,10 +1,10 @@
 The zip file contains the following files:
 
-1. run.py : This is the main file to be run. As it is, it will perform regularized logistic regression using Newton's method. 
+*1* run.py : This is the main file to be run. As it is, it will perform regularized logistic regression using Newton's method. 
 The basic outline of the file is as follows:
 	- Read the training and test data
 	- Split both sets of data (test and training) by the jet numbers 0 - 3. Split all the jets further by valid or invalid DER_MASS_MMC. For each jet, remove the features that are either
-		not calculated (-999) or deemed irrelevant.
+		not calculated (-999) or deemed irrelevant (See [1]).
 	- Loop through each data set (8 of them, 2 for each jet - 1 with valid DER_MASS_MMC and the other with invalid DER_MASS_MMC)
 		- Standardize feature set after removing outliers above a threshold specified in list_sd_limit
 		- Conduct a polynomial expansion of the features (degree 2)
@@ -14,15 +14,15 @@ The basic outline of the file is as follows:
 		- Add the predictions to the overall prediction list
 	- Print the predictions to file, with the ids and corresponding predictions
 
-2. proj1_helpers.py - 
+*2* proj1_helpers.py - 
 	- Standardization and outlier removal
 	- Read, write data
 	- Obtain and verify predictions
-	- Split data by jet numbers
-	- polynomial expansion to the specified degree
+	- Split data by jet numbers + removal of unnecessary features
+	- Polynomial expansion to the specified degree
 	- Split data into test and training for cross validation
 	
-3. implementations.py : All the regression models required
+*3* implementations.py : All the regression models required
 	- Linear:
 		- Normal equations
 		- Ridge regression
@@ -34,3 +34,31 @@ The basic outline of the file is as follows:
 		- Newton's 
 		- Regularized Newton's
 	- Other functions required to calculate gradients, the log function and the Hessian
+
+* ----------------------------------------------------------------------------------------------------------------------- *	
+[1] Features removed for each jet number
+
+Jet 0, valid DER_MASS_MMC   --> [   4, 5, 6, 8, 12, 15, 18, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32] 
+Jet 1, valid DER_MASS_MMC   --> [   4, 5, 6,    12, 15, 18, 20, 22,         25, 26, 27, 28, 29,     31, 32]
+Jet 2, valid DER_MASS_MMC   --> [                   15, 18, 20, 22,         25,         28                ]
+Jet 4, valid DER_MASS_MMC   --> [                   15, 18, 20, 22,         25,     27,     29            ]
+	
+Jet 0, invalid DER_MASS_MMC --> [0, 4, 5, 6, 8, 12, 15, 18, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32]
+Jet 1, invalid DER_MASS_MMC --> [0, 4, 5, 6,    12, 15, 18, 20, 22,         25, 26, 27, 28, 29,     31, 32]
+Jet 2, invalid DER_MASS_MMC --> [0,                 15, 18, 20, 22,         25,         28                ]
+Jet 3, invalid DER_MASS_MMC --> [0,                 15, 18, 20, 22,         25,     27,     29            ]
+
+0	DER_mass_MMC			15	PRI_tau_phi					30 CUSTOM_assymenergy
+4	DER_deltaeta_jet_jet	18	PRI_lep_phi					31 CUSTOM_delta_phi
+5	DER_mass_jet_jet		20	PRI_met_phi					32 CUSTOM_avg_phi
+6	DER_prodeta_jet_jet		22	PRI_jet_num					33 CUSTOM_special 
+8	DER_pt_tot				23	PRI_jet_leading_pt
+12	DER_lep_eta_centrality	24	PRI_jet_leading_eta
+							25	PRI_jet_leading_phi
+							26	PRI_jet_subleading_pt
+							27	PRI_jet_subleading_eta
+							28	PRI_jet_subleading_phi
+							29	PRI_jet_all_pt
+
+
+	
