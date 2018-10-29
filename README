@@ -1,5 +1,36 @@
-pipeline.py - General pipeline for prediction. Uses functions from proj1_helpers.py to load the data and implementations.py to obtain weights.
+The zip file contains the following files:
 
-proj1_helpers.py - Helper functions to read input, process input and create output files. 
+1. run.py : This is the main file to be run. As it is, it will perform regularized logistic regression using Newton's method. 
+The basic outline of the file is as follows:
+	- Read the training and test data
+	- Split both sets of data (test and training) by the jet numbers 0 - 3. Split all the jets further by valid or invalid DER_MASS_MMC. For each jet, remove the features that are either
+		not calculated (-999) or deemed irrelevant.
+	- Loop through each data set (8 of them, 2 for each jet - 1 with valid DER_MASS_MMC and the other with invalid DER_MASS_MMC)
+		- Standardize feature set after removing outliers above a threshold specified in list_sd_limit
+		- Conduct a polynomial expansion of the features (degree 2)
+		- Obtain the weights and final loss function by using the desired classification model (currently logistic regression with Newton's method and lambda = 1.
+		- Standardize test feature set using the mean and standard deviation of the training data set.
+		- Get the predictions for the test data set for the current jet and mass validity. 
+		- Add the predictions to the overall prediction list
+	- Print the predictions to file, with the ids and corresponding predictions
 
-implementations.py - Functions asked for in the project sheet go here. 
+2. proj1_helpers.py - 
+	- Standardization and outlier removal
+	- Read, write data
+	- Obtain and verify predictions
+	- Split data by jet numbers
+	- polynomial expansion to the specified degree
+	- Split data into test and training for cross validation
+	
+3. implementations.py : All the regression models required
+	- Linear:
+		- Normal equations
+		- Ridge regression
+		- Gradient Descent
+		- Stochastic Gradient Descent
+	- Logistic
+		- Gradient Descent
+		- Regularized Gradient Descent
+		- Newton's 
+		- Regularized Newton's
+	- Other functions required to calculate gradients, the log function and the Hessian
