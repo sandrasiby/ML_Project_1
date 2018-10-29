@@ -9,7 +9,7 @@ def run_model():
 	output_path = "output.csv"
 	sd_limit_0, sd_limit_1, sd_limit_2, sd_limit_3 = 3.0, 2.75, 2.75, 2.6 # SD above which outliers will be removed for each of the 4 jets
 	list_sd_limit = [sd_limit_0,sd_limit_1,sd_limit_2,sd_limit_3,sd_limit_0,sd_limit_1,sd_limit_2,sd_limit_3]
-	max_iters, stepsize, lambda_ = 20000, 1e-01, 1# Iterations for logistic regression
+	max_iters, stepsize, lambda_ = 20000, 1e-02, 1# Iteration parameters
 	
 	# ******************************************* READ DATA *************************************************************
 	#Read training data
@@ -40,9 +40,8 @@ def run_model():
 		training_tx_i = get_polynomial(training_tx_i, 2)
 	
 		#Get weights
-		initial_w = np.zeros((training_tx_i.shape[1], ))
+		initial_w = np.zeros((training_tx_i.shape[1], )) # IMPORTANT: The shape here is (n,) instead of (n,1) For linear regression, use (n,1)
 		weights_i, loss_i = reg_logistic_regression_newton(training_y_i, training_tx_i,lambda_, initial_w, max_iters, stepsize)
-		# weights_i, loss_i = stochastic_gradient_descent(training_y_i, training_tx_i, initial_w, 1, max_iters, stepsize)
 		print('weights are',weights_i)
 			
 		# ************************* PREDICTION FOR CURRENT JET NUMBER AND DER_MASS_MMC *********************************************		

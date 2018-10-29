@@ -60,7 +60,7 @@ def run_model(train_ratio, stepsize, lambda_):
 			test_tx_i_standardized = get_polynomial(test_tx_i_standardized, list_poly[i])
 			
 			#Get predictions and accuracy for the current jet
-			y_pred_i = predict_labels(weights_i, test_tx_i_standardized, 1) # 1 for logistic regression
+			y_pred_i = predict_labels(weights_i, test_tx_i_standardized, 1) # 1 for logistic regression, 0 for linear
 			accuracy = verify_prediction(y_pred_i, test_y_i)
 			
 			#Collate data for all jets
@@ -92,7 +92,7 @@ def run_model(train_ratio, stepsize, lambda_):
 if __name__ == "__main__":
     train_ratio = 0.9
     lambdas = 1.
-    gammas = [0.1]
+    gammas = [1e-01]
     	
     for gamma in gammas:
         run_model(train_ratio,gamma,lambdas)

@@ -1,4 +1,5 @@
 The zip file contains the following files:
+# IMPORTANT : When using logistic_regression, reg_logistic_regression, logistic_regression_newton, reg_logistic_regression_newton, the initial weight vector should be of shape (n,) and NOT (n,1)
 
 *1* run.py : This is the main file to be run. As it is, it will perform regularized logistic regression using Newton's method. 
 The basic outline of the file is as follows:

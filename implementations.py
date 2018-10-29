@@ -36,7 +36,7 @@ def compute_loss(y, tx, w):
     e = y - tx.dot(w)
     return calculate_mse(e)
 
-def gradient_descent(y, tx, initial_w, max_iters, gamma):
+def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     """Gradient descent algorithm."""
     w = initial_w
     loss = 0
@@ -56,7 +56,8 @@ def compute_stoch_gradient(y, tx, w):
     return grad, err
 
 
-def stochastic_gradient_descent(y, tx, initial_w, batch_size, max_iters, gamma):
+def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma):
+    """Stochastic Gradient descent algorithm."""
     w = initial_w
     for n_iter in range(max_iters):
         for y_batch, tx_batch in batch_iter(y, tx,batch_size, 1):
@@ -195,7 +196,7 @@ def logistic_regression(y,tx,init_w,max_iters,gamma):
     isNewton = 0
     
     # Initialize guess weights
-    w = init_w
+    w = np.reshape(init_w,(len(init_w),))
 
     # Start the logistic regression
     for iter in range(max_iters):
@@ -220,7 +221,7 @@ def logistic_regression_newton(y,tx,init_w,max_iters,gamma):
     losses = []
         
     # Initialize guess weights
-    w = init_w
+    w = np.reshape(init_w,(len(init_w),))
 
     # Start the logistic regression
     for iter in range(max_iters):
@@ -244,7 +245,7 @@ def reg_logistic_regression(y,tx,lambda_,init_w,max_iters,gamma):
     losses = []
     
     # Initialize guess weights
-    w = np.zeros((tx.shape[1], ))
+    w = np.reshape(init_w,(len(init_w),))
 
     # Start the logistic regression
     for iter in range(max_iters):
@@ -268,7 +269,7 @@ def reg_logistic_regression_newton(y,tx,lambda_,init_w,max_iters,gamma):
     losses = []
     
     # Initialize guess weights
-    w = init_w
+    w = np.reshape(init_w,(len(init_w),))
 
     # Start the logistic regression
     for iter in range(max_iters):
